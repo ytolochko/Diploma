@@ -1,0 +1,10 @@
+status_name	status_trans	ad_status_code	status	ad_status_description
+à spécifier	To be specified			
+Clôturé financièrement	Fenced financially	6	Suspended	The activity has been temporarily suspended
+Clôturé opérationnellement	Operationally closed	3	Completion	Physical activity is complete or the final disbursement has been made.
+En cours partiellement financé	Being partially funded	2	Implementation	The activity is currently being implemented
+En cours totalement financé	Being fully funded	2	Implementation	The activity is currently being implemented
+En étude de faisabilité / en formulation	In the feasibility study / formulation	1	Pipeline/identification	The activity is being scoped or planned
+Formulé et bancable, financement recherché	Formulated and bankable funding sought	1	Pipeline/identification	The activity is being scoped or planned
+Identifié, en étude de pré-faisabilité	Identified in the pre-feasibility study	1	Pipeline/identification	The activity is being scoped or planned
+Programmé et non décaissé	Programmed and undisbursed	1	Pipeline/identification	The activity is being scoped or planned

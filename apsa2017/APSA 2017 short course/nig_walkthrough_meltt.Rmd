@@ -1,0 +1,413 @@
+---
+title: "Tools & Best Practices for the Integration of Geospatial Data "
+output: html_document
+---
+```{r,eval=F,echo=F}
+rm(list=ls(all=T))
+```
+
+## Overview
+This notebook was developed to accompany the tutorial of a short course offered at the 2017 Annual Meeting of the American Political Science Association. The instructors for the course are Karsten Donnay (University of Konstanz), Eric Dunford (University of Maryland), Andrew Linke (University of Utah), Erin McGrath (University of Maryland), David Backer (University of Maryland), and David Cunningham (University of Maryland). This short course focuses on newly developed software tools designed by the instructors, which enable more effective work with multiple datasets that have geospatial properties, which are increasingly employed in research conducted throughout the social sciences. The aims of the course are to familiarize participants with the use of these tools and associated best practices. At the end of the course, participants should understand why and how they could use these tools to support relevant research that requires integrating datasets with particular geospatial properties.
+
+The first part of the notebook walks through the functionality, applications and best practices of the `geomerge` package, which was just released. This package has been designed primarily to facilitate addressing challenges related to the integration of datasets with different geospatial properties. The package is illustrated using example data for Nigeria 2011. The illustration covers integration of `Polygon`, `Raster` and `Point` data, including how to generate spatial panel data.
+
+The first part of the notebook walks through the functionality, applications and best practices of the `meltt` package, which was released earlier this year. This package has been designed to facilitate the integration of event data from multiple sources with differing properties. The package is illustrated by drawing on conflict event data from four prominent event datasets covering conflict observed in Nigeria during 2011.
+
+The tutorial is designed to be hands-on, with participants working through the illustrative examples, accessing and processing datasets using the commands available in the `geomerge` and `meltt` packages. Doing so requires, at a minimum, an installation of the R programming software. Some knowledge of R is useful, though not mandatory. During this short course and tutorial, participants should learn about the utility, logic, and functionality of the two packages even without any significant expertise in R.
+
+# Part 2: meltt - Matching Event Data by Location, Type and Time
+
+## Why We Developed meltt
+
+The use case: In various social science settings, empirical research relies on event data, which seeks to capture information on individual occurrences of phenomena, in a manner that is spatially and temporally disaggregated. Common examples of events for which data are available include incidents of armed conflict, which were discussed earlier (i.e., `ACLED`), as well as neighborhood crime, terrorist attacks, car accidents, and marathon running times. Event data provide a granular picture of the distributions of locations and timings of a specific phenomenon.
+
+In an increasing number of instances, more than one available event dataset captures the same or related topics. For example, multiple datasets capture similar information on battles between organized armed actors engaged in civil wars. Different event datasets may have information that is valuable, which is not offered by one dataset alone. Integrating event datasets could be useful to bolster spatial and temporal coverage, to encompass a broader spectrum of a phenomenon (i.e., more types), to collate existing information about events (i.e., compile more characteristics and/or more details), and/or to cross-validate the coding of these datasets (i.e., check whether different datasets yield the same measures of a given phenomenon). 
+
+The main challenges: Integrating multiple event datasets requires comparison of the entries in those datasets. Comparison is essential to avoid duplicate entries of the same event. Mere pooling of datasets could yield such duplicates, if different datasets happen to record some or all of the same events. Comparison is also necessary to establish matches. Knowing what entries match across multiple event datasets is useful when collating information about events, or when engaging in cross-validation.
+
+Comparing event data, with the goal of establishing which entries do and do not match across multiple datasets, is notoriously difficult for the following reasons:
+
+- **Spatial and Temporal Fuzziness**. Information about events can differ depending on the original sources from which event data are derived. For example, news media sources can vary in their reporting of the location and/or timing of an event---especially if precise on-the-ground information is hard to come by. This variation can result in both spatial and temporal fuzziness, where the same event is "measured" with distinct locations and days across different datasets, due to their reliance on different original sources. The fuzziness can be large or small---and is not always consistent even within the same event dataset, again depending on the original sources.
+
+- **Jittering Locations**. Different geo-referencing software can produce slightly different longitude and latitude coordinates for the same named place. Those differences result in an artificial geo-spatial "jitter" around the same location, depending on which gazetteer is used in the software.
+
+ - **Conceptual Differences**. Different event datasets are designed for different reasons. Each dataset will likely reflect a distinctive coding scheme---even for the same specific category of events, let alone for the same general category of events. For example, a dataset recording local muggings and burglaries might have a schema that records these types of events categorically (i.e. "mugging", "break in", etc.), whereas another crime dataset might record violent crimes and do so ordinally (1, 2, 3, etc.). Both datasets might be capturing the same event (e.g., a violent mugging), but each has a distinct way of coding that event.
+
+In the past, researchers seeking to overcome these hurdles have typically relied on hand-coding processes to match data. This approach is extremely time consuming and costly, especially to do systematically and on a large scale. At the maximum, each entry in one dataset may need to be compared carefully to each entry in every other dataset of interest. This sort of process requires a lot of meticulous work to yield high-quality, reliable results. In practice, the results can be prone to mistakes, because of differences in what coders see as well as inattentiveness, sloppiness, and other forms of human error. The results of hand-coding are typically hard to reproduce and replicate exactly. For one, doing so requires performing the same comparisons all over again. If done by hand once more, this is time-consuming and costly. Even if automated, the correspondence is unlikely to be perfect. Human coding simply does not ensure 100% consistent output. The performance can be excellent, with clear rules of coding that are strictly observed, though rarely at the level of an automated algorithm.
+
+## What meltt Does
+
+`meltt` provides a tool for integrating multiple event datasets in an automated, fast, inexpensive, flexible, transparent, reproducible fashion. More information about the specifics of the method can be found in the package documentation, which will soon be accompanied by article that describes and applies the methodology.
+
+## Using meltt for Research
+
+`meltt` provides a means of integrating multiple event datasets on the same or similar topics. The output of the package can expand the spatial and temporal scope of coverage, extending analyses in ways that may improve both internal and external validity. The package can be used to integrate data on different types of events, while mitigating against any duplication in records. The output can therefore be valuable and more reliable in studying relationships among types of events. Further, users can rely on the package to collate information on events as recorded in multiple datasets, to enrich the available details. A final benefit is to engage in cross-validation, checking how different datasets measure the same phenomenon.
+
+## Installation
+The package can also be installed through the **CRAN repository**.
+
+```{r,eval=F}
+# install.packages("meltt") 
+```
+
+Again, we recommend that users install the latest development version of the package from Github for the purposes of this tutorial. 
+
+```{r,eval=F}
+devtools::install_github("css-konstanz/meltt")
+```
+
+<font color="darkgrey">**<u>Important</u>: _Currently, the package requires that users have both Python (>= 2.7) and a version of the `numpy` module installed on their computers. To quickly obtain both, install an [Anaconda](https://www.continuum.io/downloads) platform. `meltt` will use these programs in the background._**</font>
+
+```{r}
+library(meltt)
+```
+
+## Conflict Data
+As an illustration, we use several well-established sources of conflict event data, including ACLED, the Uppsala Conflict Data Program’s Georeference Event Data (UCDP-GED), the Social Conflict Analysis Database (SCAD), and the Global Terrorism Database (GTD). Each of these datasets records information about the spatio-temporal occurrence of conflict activity within the country. You downloaded `Nigeria_2011.Rdata` together with this tutorial file. To create `Nigeria_2011.Rdata`, we subset entries from the UCDP-GED, ACLED, SCAD, and GTD datasets for Nigeria 2011.
+
+```{r}
+# Load Data
+load("data/Nigeria_2011.Rdata")
+```
+```{r}
+library(raster)
+# Quick visual overview of ACLED data
+plot(states)
+plot(SpatialPoints(cbind(acled$LONGITUDE,acled$LATITUDE)),new=TRUE,add=TRUE)
+```
+```{r}
+# Quick visual overview of UCPD-GED data
+plot(states)
+plot(SpatialPoints(cbind(ged$longitude,ged$latitude)),new=TRUE,add=TRUE)
+```
+```{r}
+# Quick visual overview of GTD data
+plot(states)
+plot(SpatialPoints(cbind(gtd$longitude[!is.na(gtd$longitude)],gtd$latitude[!is.na(gtd$longitude)])),new=TRUE,add=TRUE)
+```
+```{r}
+# Quick visual overview of SCAD data
+plot(states)
+plot(SpatialPoints(cbind(scad$longitude,scad$latitude)),new=TRUE,add=TRUE)
+```
+
+Each dataset contains information on the:
+
+- `date`: when the event occurred;
+- `enddate`: if the event occurred across more than one day (i.e., an "episode");
+- `longitude` & `latitude`: geo-location information;
+- `event type`: the kind of activity for that entry;
+- `actor`: who initiated the activity.
+
+We will rely on this information to place entries into "bins" for purposes of appropriately and efficiently comparing entries across datasets, ultimately allowing the identification of potential matching entries (i.e., entries that appear to concern the same event). To reiterate, matching can be useful for several reasons. Perhaps most important is to ensure that integration does not lead to duplicate entries within the integrated data. The user may also be interested to collate information on events as recorded in different datasets, or to cross-validate the measurement of events based on the information available in different datasets.
+
+`meltt` formalizes all input assumptions the user needs to make in order to compare event datasets and identify entries that may match (i.e., concern the same event). First, the user must specify a spatial and temporal window within which any potential match could plausibly fall. That is, how close in space and time do entries need to be to qualify as potentially recording the same event?
+
+Second, to articulate how different coding schemas overlap, the user needs to input an event taxonomy. A taxonomy is a formalization of how variables overlap, moving from as granular as possible to as general as possible. In this case, we are going to explore two taxonomies to help integrate the data: an **event taxonomy** that generalizes across event types, and an **actor taxonomy** that generalizes across the various actors located in the data. 
+
+## Generating a taxonomy
+To generate a taxonomy, it **_must_** exist across all datasets being integrated. For example, there must be some form of event type variable in each dataset to compare events. Lacking such information simply means the dataset missing the comparable parameter cannot be compared to the other datasets. 
+
+For the datasets of interest, we see that each contains information on an event's type, but that information differs significantly across each dataset, given that each was created for different purposes and that each seeks to capture different types of activities (some of which overlap across data, and some that do not).
+
+For example, observe how the information regarding event type is presented differently across the four datasets.
+
+```{r}
+cat("\n GED \n",
+    unique(ged$type_of_violence),
+    "\n\n ACLED \n",
+    unique(acled$EVENT_TYPE),
+    "\n\n GTD \n",
+    unique(gtd$attacktype1),
+    "\n\n SCAD \n",
+    unique(scad$etype)
+)
+```
+
+The corresponding variable from each dataset records information on the type of event a little differently. The idea of introducing a taxonomy is then, as mentioned before, to generalize across each category by clarifying how each coding scheme maps onto the other.
+
+From the data folder, let's load an event and actor taxonomy that we already put together for the Nigeria 2011 data.
+```{r}
+load("data/taxonomies.Rdata")
+```
+
+A taxonomy allows a researcher to make all assumption regarding how variables map onto each other explicit. Zooming in on the actor taxonomy for the Nigeria 2011 data, we can see that as we move up the taxonomy levels, the more general the bins become. That is, we attempt to be as granular as possible when located the overlap on the first level and then we become more general, ending in just two categories (violent or nonviolent). 
+```{r}
+# View(event_tax)
+event_tax
+```
+
+Likewise, we similarly formalized the actor taxonomy in a similar manner.
+```{r}
+actor_tax
+```
+
+Generally, specifications of taxonomy levels can be as granular or as broad as one chooses. The more fine-grained the levels one includes to describe the overlap, the more specific the match. At the same time, if categories are too narrow, it is difficult to conceptualize potential matches across datasets. As a rule, there is a tradeoff between specific categories that can better differentiate among possible duplicate entries and unspecific categories that more easily recognize potentially matching information across datasets.
+
+As a general rule, we therefore recommend to include, whenever it is conceptually warranted, both specific fine-grained categories and a few increasingly broader ones. In this case, `meltt` will have more information to work with when differentiating between sets of potential matches. In establishing which entries are most likely to correspond, `meltt` in case of more than two potential matches in one dataset always automatically favors the one that more precisely corresponds. **A good taxonomy is the key to matching data, and is the primary vehicle by which a user's assumptions -- regarding how data fits together -- is made transparent.**
+
+## Preparing the data for integration
+There are a few technical details regarding how the data must be organized to submit as arguments in `meltt`.
+
+- **Taxonomies must be organized as lists**: each taxonomy `data.frame` is read into the `taxonomy` argument of `meltt` as part of a single list object.
+
+```{r}
+taxonomies = list("event_tax" = event_tax,
+                  "actor_tax" = actor_tax)
+str(taxonomies)
+```
+
+- **Taxonomies must be named the same as the variables they seek to describe**: `meltt` relies on simple naming conventions to identify which variable is what when matching. 
+
+```{r}
+names(taxonomies)
+```
+
+In this case, let's rename the variables in the data to correspond with the naming convention of the taxonomies that we designated.
+
+```{r}
+# for events
+names(ged)[names(ged)=='type_of_violence'] = 'event_tax'
+names(acled)[names(acled)=='EVENT_TYPE'] = 'event_tax'
+names(scad)[names(scad)=='etype'] = 'event_tax'
+names(gtd)[names(gtd)=='attacktype1'] = 'event_tax'
+
+# for actors
+names(ged)[names(ged)=='side_a'] = 'actor_tax' # given UCPD dyad conventions
+names(acled)[names(acled)=='ACTOR1'] = 'actor_tax'
+names(scad)[names(scad)=='actor1'] = 'actor_tax'
+names(gtd)[names(gtd)=='gname'] = 'actor_tax'
+```
+
+- **Each taxonomy must contain a `data.source` and `base.categories` column**: this last convention helps `meltt` identify which variable is contained in which data object. The `data.source` column should reflect the **_names of the of the data objects for input data_** and the `base.categories` should reflect the original coding of the variable on which the taxonomy is built.
+
+```{r}
+head( event_tax[, c( "data.source","base.categories" ) ] )
+```
+
+- **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions are allowed). The dates should be in an `R` date format (`as.Date()`), and the geo-reference information must be numeric (`as.numeric()`).
+
+As you might have already realized from looking at the data, they are not perfectly organized in this way, so we will need to do a little cleaning prior to processing.
+
+```{r}
+# Cleaning UCDP-GED
+ged$date_start = as.Date(ged$date_start)
+names(ged)[names(ged)=='date_start'] = 'date'
+ged$date_end = as.Date(ged$date_end)
+names(ged)[names(ged)=='date_end'] = 'enddate'
+
+# Cleaning ACLED
+colnames(acled)  = tolower(colnames(acled))
+acled$event_date = as.Date(acled$event_date)
+names(acled)[names(acled)=='event_date'] = 'date'
+
+# Cleaning GTD
+gtd$date = as.Date(paste0(gtd$iyear,"-",gtd$imonth,"-",gtd$iday))
+
+# Time and Location in formation must be complete. Cannot process entries 
+# missing this information. Here GTD is missing lat/lon information for one
+# entry; thus, we drop it.
+gtd = gtd[!is.na(gtd$latitude),]
+
+# Cleaning SCAD
+scad$startdate = as.Date(scad$startdate)
+names(scad)[names(scad)=='startdate'] = 'date'
+scad$enddate = as.Date(scad$enddate)
+```
+
+Lastly, the ACLED data codes protest and riots into a single category. We opt to disaggregate this level further by breaking the event type up into "Protests" and "Riots" categories, using the number of reported fatalities as the delimiter. 
+
+```{r}
+acled$event_tax[acled$event_tax == "Riots/Protests" & 
+                   (acled$fatalities==0 | 
+                   is.na(acled$fatalities))] = "Protests"
+acled$event_tax[acled$event_tax == "Riots/Protests" & acled$fatalities>0] = "Riots"
+```
+
+
+## Matching Data
+Once the taxonomy is formalized, matching several datasets is straightforward. The `meltt()` function takes four main arguments:
+
+- `...`: input data;
+- `taxonomies = `: list object containing the user-input taxonomies;
+- `spatwindow = `: the spatial window (in kilometers);
+- `twindow = `: the temporal window (in days).
+
+Below we assume that any two events among the four different datasets occurring within 3 kilometers and 1 days of each other could plausibly be the same event. This "fuzziness" basically sets the boundaries on how precise we believe the spatial location and timing of events is coded. It is usually best practice to vary these specifications systematically to ensure that no one specific combination drives the outcomes of the integration task.
+
+We then assume that event categories map onto each other according to the way that we formalized in the taxonomies outlined above. We fold all this information together using the `meltt()` function and then store the results in an object named `output`.
+
+```{r}
+output <-  meltt(acled,ged,scad,gtd,
+                 taxonomies = taxonomies,
+                 twindow = 1,spatwindow = 3)
+```
+
+_The above message notes that two of the datasets (ACLED and GTD) do not have enddate. That is, they do not contain episodal data. `MELTT` will create a placeholder for the enddate that mirrors the date._
+
+`meltt` also contains a range of adjustments to offer the user additional controls regarding how the events are matched. These auxiliary arguments are:
+
+- `smartmatch`: when `TRUE` (default), all available taxonomy levels are used and `meltt` uses a matching score that ensures that fine-grained agreements is favored over broader agreement, if more than one taxonomy level exists. When `FALSE`, only specific taxonomy levels are considered.
+- `certainty`: specification of the exact taxonomy level to match on when `smartmatch = FALSE`.
+- `partial`: specifies whether matches along only some of the taxonomy dimensions are permitted.
+- `averaging`: implement averaging of all values events are match on when matching across multiple data.frames. That is, as events are matched dataset by dataset, the metadata is averaged. (Note: that this can generate distortion in the output).
+- `weight`: specified weights for each taxonomy level to increase or decrease the importance of each taxonomy's contribution to the matching score.
+
+At times, one might want to know which taxonomy level is doing the heavy lifting. By turning off `smartmatch`, and specifying certain taxonomy levels by which to compare events, or by weighting taxonomy levels differently, one is able to better assess which assumptions are driving the final integration results. This can help with fine-tuning the input assumptions for `meltt` to gain the most valid match possible.
+
+### Output
+When printed, the `meltt` object offers a brief summary of the output.
+
+```{r}
+output
+```
+
+
+In matching the four conflict datasets, there are 915 total entries. Of those, 151 of them are events contained within two or more datasets based on their timestamp, location and event characteristics (as expressed by the taxonomies). As such, MELTT removes 225 entries that are found to be duplicates, leaving us with 690 "unique" entries.
+
+Likewise, the `summary()` function offers a more informed summary of the output.
+
+```{r}
+summary(output)
+```
+
+Given that meltt objects can be saved and referenced later, the summary function offers a recap on the input parameters and assumptions that underpin the match (i.e. the datasets, the spatiotemporal window, the taxonomies, etc.). Again, information regarding the total number of observations, the number of unique and duplicate entries, and the number matches found is reported, but this time information regarding how many of those matches were event-to-event (i.e. events that played out along one time unit where the date is equal to the end date) and episode-to-episode (i.e. events that played out over a couple of days).
+
+A **summary of overlap** is also provided, articulating how the different input datasets overlap and where. For example, only 11 entries appear in all four datasets, while 4 entries are found to match across GED/SCAD/GTD, 6 across ACLED/SCAD/GTD, and 34 across ACLED/GED/GTD.
+
+**Note:** events that have been flagged as matching to episodes require manual review using the `meltt.inspect()` function. The summary output tells us that 40 episodes are flagged as potentially matching to some event. Technically speaking, episodes (events with different start and end dates) and events are at different units of analysis; thus, user discretion is required to help sort out these types of matches. The `meltt.inspect()` function eases this process of manual assessment. See below for more information. 
+
+
+### Visualization
+For quick visualizations of the matched output, `meltt` contains three plotting functions.
+
+`plot()` offers a bar plot that graphically articulates the unique and overlapping entries. Note that the entries from the leading dataset (i.e. the dataset first entered into meltt) is all black. In this representation, all matching (or duplicate) entries are expressed in reference to the datasets that came before it. Any match found in GED is with respect to ACLED, any in SCAD with respect to ACLED and GED, and so forth. As such, the leading data set is always in black.
+
+```{r}
+plot(output)
+```
+
+
+`tplot()` offers a time series plot of the meltt output. The plot works as a reflection, where raw counts of the unique entries are plotted right-side up and the raw counts of the removed duplicates are plotted below it. This offers a quick snapshot of _when_ duplicates are found. Temporal clustering of duplicates may indicate an issue with the data and/or the input assumptions, or it's potentially evidence of a unique artifact of the data itself.
+
+Users can specify the temporal unit that the data should be binned (day, week, month, year). Give that the data only covers one month, we'll look at the output by day.
+
+```{r}
+tplot(output, time_unit = "months")
+```
+
+
+Similarly, `mplot()` presents a summary of the spatial distribution of the data by mapping the spatial points. Events where matches were detected are labeled by blue circles. Again, the goal is to get a sense of the spatial distribution of the matches to both identify any clustering/disproportionate coverage in where matches are located, and to also get a sense of the spread of the integrated output.
+
+```{r,}
+mplot(output)
+```
+
+The `mplot()` command, in fact, opens an interactive data browser in the viewer window allowing a granular inspection of the spatial matches. Information regarding the input criteria in which each entry was assessed (e.g. the taxonomy inputs) are retained and can be referenced by hovering over the point with the mouse. 
+
+# Extracting Data
+
+## Grabbing the De-Duplicated Data
+`meltt` provides two methods for extracting data from the output object.
+
+`meltt.data()` returns the de-duplicated data along with any necessary columns the user might need. This is the primary function for extracting matched data and moving on with subsequent analysis. The `columns =` argument takes any vector of variable names and returns those variables in the output. If no variables are specified, `meltt` returns the spatio-temporal and taxonomy variables that were employed during the match. In addition, the function returns a unique event and data ID for reference.
+
+```{r}
+uevents <- meltt_data(output)
+head(uevents)
+```
+
+The number of entries in this data frame corresponds with the number of de-duplicated entries in the data. 
+```{r}
+dim(uevents)
+```
+
+In addition, we can extract specific columns of data by using the `columns=` argument. Below we extract all the event summary columns for the four datasets to retrieve the qualitative descriptions of the reported events.
+```{r}
+uevents2 <- meltt_data(output,
+                       columns = c("date","event_tax","longitude","latitude",
+                                   "notes","summary","source_headline","issuenote"))
+head(uevents2)
+```
+
+Note that there is some overlap in the descriptions across datasets. These are events that have been matched up. The information from the original dataset can be retrieved, even if the entry itself has been flagged as a duplicate and removed. In this way, `meltt` operates as a sophisticated `merge` function. 
+
+## Grabbing the Duplicates
+`meltt.duplicates()`, on the other hand, returns a data frame of all events that matched up. This provides a quick way of examining and assessing the events that matched. Since the quality of any match is only as good as the assumptions we input, its key that the user qualitatively evaluate the meltt output to assess whether any assumptions should be adjusted. Like `meltt.data()`, the `columns = ` argument can be customized to return variables of interest.
+
+Note that the data is presented differently than in `meltt.data()`; here each dataset (and its corresponding variables) is presented in a separate column. This representation is chose for ease of comparison. The requested columns are intended to assist with validation.
+
+Below we do not specify specific columns. As such, all columns (with unique IDs on each variable) are returned. This returns a wide dataset.
+```{r}
+dups <- meltt_duplicates(output)
+head(dups)
+```
+
+The number of entries corresponds with the number of located matches. 
+```{r}
+dim(dups)
+```
+
+By examining the nature of the overlapping output, we can get a better understanding of what events matched and why. The information regarding overlapping events could be just as valuable as a de-duplicated frame, given the research question. `meltt.duplicates()` allows the research to make these kinds of inquiries. 
+
+Again, let's extract descriptive information to qualitatively compare events, given the available text descriptions of the events. This offers a quick way to see how well our input assumptions performed when merging events. 
+```{r}
+dups2 <- meltt_duplicates(output,
+                          columns = c("notes","summary","issuenote",
+                                      "source_headline"))
+head(dups2) 
+```
+
+## Inspecting potential event and episode matches
+As noted above, event-to-episode matches are flagged, but not automatically matched. To do this, the user needs to inspect the flagged entries and dictate which are actual matches and which are not. Again, we implement the user step given that events and episodes technically occur at different units of analysis, and thus require discretion when ultimately determining their status as unique or duplicate entries. Note that **_we are developing a shiny app to help ease this assessment process_**. 
+
+The `meltt.inspect()` function streamlines this process. The function outputs a list that contains comparative information on each potential event and episode match. 
+
+```{r}
+assess = meltt_inspect(output)
+```
+
+The user then manually reviews each entry by cycling through the outputted list object. 
+
+```{r}
+# Information on the event
+assess[[1]]$`Flagged Event Information`
+```
+
+```{r}
+# Information on the episode
+assess[[1]]$`Flagged Episode Information`
+```
+
+The function takes an object of class `meltt` and has two accompanying arguments: `columns` and `confirmed_matches`. When two events are found to match, the user can specify this information to fold in those entries as de-duplicated entries in the return frame. To accomplish this, the user must provide a Boolean argument that is equal length of the total number of flagged entries. In this manner, flagged entries marked as `TRUE` are treated as matches, and those marked as `FALSE` are treated as unique. The returned frame then reflects output similar to `meltt.data()`.
+
+By way of example:
+
+```{r}
+length(assess)
+```
+
+
+```{r}
+retain = rep(F,length(assess))
+retain[1:20] = T # Let's say half are ID'ed as duplicates
+retain
+```
+
+```{r}
+uevents3  = meltt_inspect(output,columns="event_tax",confirmed_matches = retain)
+dim(uevents3)
+```
+
+Note that the total number of de-duplicated events has fallen, reflecting the newly identified (and now removed) duplicates of existing events. 691 of the original de-duplicated entries reduces to 687. Note that this reduction is a feature of the fact that multiple events can cling to the same episode. Thus, there are 40 events flagged as matching to episodes, but only 18 unique episodes that can potentially be removed as duplicates. Thus, emphasizing the need for user discretion. 
+
+## Inside the Output Object
+Like most S3 objects, the output from `meltt` is a nested list containing a range of useful information. The output from `meltt` retains the original input data and taxonomies and the specification assumptions as well as lists of contender events (i.e. events that were flagged as potential matches but did not match as closely as another event). Note that we are expanding meltt's functionality to include more posterior function to ease extraction of this information, but for now, it can simply be accessed using the usual `$` key convention.
+
+```{r}
+names(output)
+```
+
+```{r}
+head(output$processed$event_contenders)
+```

@@ -1,0 +1,29 @@
+sector_value	sector_value_translate	ad_sector_codes	ad_sector_names	ad_purpose_code	ad_purpose_name
+AGRICULTURE, ELEVAGE	AGRICULTURE, LIVESTOCK	311	Agriculture	31120	Livestock
+BANQUES ET SERVICES FINANCIERS	BANKING AND FINANCIAL SERVICES	240	Banking and Financial Services	24005	Banking and financial services, purpose unspecified or does not fit under any other applicable codes
+COMMUNICATIONS	COMMUNICATIONS	220	Communications	22005	Communications, purpose unspecified or does not fit under any other applicable codes
+EAU ET ASSAINISSEMENT	WATER AND SANITATION	140	Water supply and sanitation	14005	Water supply and sanitation, purpose unspecified or does not fit under any other applicable codes
+EDUCATION	EDUCATION	110	Education	11005	Education, level unspecified, purpose unspecified or does not fit under any other applicable codes
+ENERGIE (PRODUCTION ET DISTRIBUTION)	ENERGY (SUPPLY)	230	Energy generation and supply	23005	Energy generation and supply, purpose unspecified or does not fit under any other applicable codes
+ENTREPRISES ET AUTRES SERVICES	BUSINESS AND OTHER SERVICES	250	Business and other services	25010	Business support service and institutions
+ENVIRONNEMENT (PROTECTION DE L')	ENVIRONMENT (PROTECTION OF THE)	410	General environmental protection	41005	General environmental protection, purpose unspecified (includes miscellaneous conservation and protection measures not mentioned below) or does not fit under any other applicable codes
+GOUVERNANCE ET SOCIETE CIVILE	GOVERNANCE AND CIVIL SOCIETY	150	Government and civil society	15105	Government and civil society, purpose unspecified or does not fit under any other applicable codes
+INDUSTRIES EXTRACTIVES	Extractive Industries	322	Mineral resources and mining	32205	Mineral resources and mining, purpose unspecified or does not fit under any other applicable codes
+INDUSTRIES MANUFACTURIERES	MANUFACTURING INDUSTRIES	321	Industry	32105	Industry, purpose unspecified (includes manufacturing of goods not specified below) or does not fit under any other applicable codes
+PECHE	PEACH	313	Fishing	31305	Fishing, purpose unspecified or does not fit under any other applicable codes
+POLITIQUE COMMERCIALE ET REGLEMENTATIONS ET AJUSTEMENT LIES	TRADE POLICY AND REGULATIONS AND RELATED ADJUSTMENT	331	Trade policy and regulations	33105	Trade policy and regulations, purpose unspecified (includes trade and trade promotion activities) or does not fit under any other applicable codes
+POLITIQUE DE LA CONSTRUCTION	BUILDING POLICY	160	Other social infrastructure and services	16030	Housing policy and administrative management
+POLITIQUE EN MATIERE DE POPULATION/SANTE ET FERTILITE /VIH-SIDA	POLICY ON POPULATION / HEALTH AND FERTILITY / HIV-AIDS	130	Population policies/ programmes and reproductive health	13040	Std control including hiv/aids
+SANTE	HEALTH	120	Health	12005	Health, purpose unspecified or does not fit under any other applicable codes
+SERVICES SOCIAUX DIVERS	OTHER SOCIAL SERVICES	160	Other social infrastructure and services	16010	Social/ welfare services
+SYLVICULTURE	FORESTRY	312	Forestry	31205	Forestry, purpose unspecified or does not fit under any other applicable codes
+TOURISME	TOURISM	332	Tourism	33210	Tourism policy and administrative management
+TRANSPORTS ET ENTREPOSAGE	TRANSPORTATION AND STORAGE	210	Transport and storage	21005	Transport and storage, purpose unspecified or does not fit under any other applicable codes
+X1:MULTI-SECTEURS	X1: MULTI-SECTORS	430	Other	43010	Multisector aid
+X2:FRAIS ADMINISTRATIFS DES BAILLEURS ET AGENCES	X2: ADMINISTRATIVE COSTS AND DONOR AGENCIES	910	Administrative costs of donors	91010	Administrative costs
+X3:AIDE-PROGRAMME ET AIDE SOUS FORME DE PRODUITS	X3: AID PROGRAM AND COMMODITY FORM	530	Other commodity assitance	53040	Import support (commodities)
+X4:CONTRIBUTIONS VERSEES A DES FONDS COMMUNS POUR LA RDC	X4: CONTRIBUTIONS TO COMMON FUND DRC	998	Unallocated/ unspecified	99820	Promotion of development awareness
+X5:CONCOURS FOURNIS AUX ONGS	X5: CONTEST PROVIDED TO NGOS	920	Support to non- governmental organisations (ngos) and government organizations	92005	Support to non-governmental organizations and government organizations, purpose unspecified or does not fit under any other applicable codes
+X6:ACTIONS SE RAPPORTANT À LA DETTE	X6: ACTION RELATING TO DEBT	600	Action relating to debt	60010	Action relating to debt
+X7:AIDE HUMANITAIRE	X7: HUMANITARIAN AID	720	Emergency Response	72000	Emergency response, combination of purposes
+Z:NON AFFECTE/ NON SPECIFIE	Z: UNALLOCATED / NOT SPECIFIED	998	Unallocated/ unspecified	99820	Unallocated/ unspecified

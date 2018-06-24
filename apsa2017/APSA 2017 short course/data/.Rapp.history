@@ -1,0 +1,5 @@
+load("/Users/edunford/Dropbox/Research/ONGOING/START - Inspire Project/RA Reports/APSA 2017 short course/tutorials/data/taxonomies.Rdata")
+ls
+ls()
+head(event_tax)
+event_tax
