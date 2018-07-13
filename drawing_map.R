@@ -20,7 +20,7 @@ aid <- read.csv('C:\\Users\\Yurii\\Desktop\\Konstanz stuff\\Diploma\\Data\\aid_d
 aid$log_commitments <- log(aid$even_split_commitments)
 aid$transactions_start_year <-  as.factor(aid$transactions_start_year)
 
-conflict <- aid <- read.csv('C:\\Users\\Yurii\\Desktop\\Konstanz stuff\\Diploma\\Data\\conflict_data\\DRC_2.csv')
+conflict <- read.csv('C:\\Users\\Yurii\\Desktop\\Konstanz stuff\\Diploma\\Data\\conflict_data\\DRC_2.csv')
 
 names(conflict)
 
