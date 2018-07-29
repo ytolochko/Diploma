@@ -27,13 +27,14 @@ names(conflict)
 
 install.packages('maptools')
 library('maptools')
-library(ggmap)
+library('ggmap')
 
 shpfile <- 'C:\\Users\\Yurii\\Desktop\\Konstanz stuff\\Diploma\\Data\\gadm36_COD_shp\\gadm36_COD_1.shp'
 sh <- readShapePoly(shpfile)
 plot(sh)
 
 points <- fortify(sh)
+
 drc <- qmap('DRC', zoom = 5)
 
 drc + geom_polygon(aes(x = long, y = lat, group=group), data = points, fill = 'white') +
@@ -49,3 +50,14 @@ drc + geom_polygon(aes(x = long, y = lat, group=group), data = points, fill = 'w
   geom_polygon(aes(x=long,y=lat, group=group), data=points, color='black', fill=NA) + 
   geom_point(aes(x = longitude, y = latitude, size = best_est, color = year), data = conflict) +
   scale_size(range = c(1,12))
+
+
+shpfile <- 'C:\\Users\\Yurii\\Desktop\\Konstanz stuff\\Diploma\\Data\\Shapefiles\\ADM1\\compiled.shp'
+sh <- readShapePoly(shpfile)
+plot(sh)
+points <- fortify(sh)
+
+qmap('Africa', zoom = 4) +
+geom_polygon(aes(x = long, y = lat, group=group), data = points, fill = 'white') +
+geom_polygon(aes(x=long,y=lat, group=group), data=points, color='black', fill=NA)
+
