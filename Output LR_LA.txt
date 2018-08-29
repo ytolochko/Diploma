@@ -1,0 +1,28 @@
+                               OLS Regression Results                              
+===================================================================================
+Dep. Variable:     casulaties_standardized   R-squared:                       0.170
+Model:                                 OLS   Adj. R-squared:                  0.119
+Method:                      Least Squares   F-statistic:                     3.287
+Date:                     Wed, 29 Aug 2018   Prob (F-statistic):             0.0503
+Time:                             21:16:16   Log-Likelihood:                 225.17
+No. Observations:                       35   AIC:                            -444.3
+Df Residuals:                           32   BIC:                            -439.7
+Df Model:                                2                                         
+Covariance Type:                 nonrobust                                         
+==================================================================================================
+                                     coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------
+Intercept                         -0.0001      0.001     -0.265      0.793      -0.001       0.001
+log_lagged_commitments          1.315e-05   3.74e-05      0.352      0.727    -6.3e-05    8.93e-05
+lagged_casualties_standardized     0.8312      0.331      2.514      0.017       0.158       1.505
+==============================================================================
+Omnibus:                       44.054   Durbin-Watson:                   2.078
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              180.154
+Skew:                           2.810   Prob(JB):                     7.59e-40
+Kurtosis:                      12.589   Cond. No.                     6.84e+04
+==============================================================================
+
+Warnings:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 6.84e+04. This might indicate that there are
+strong multicollinearity or other numerical problems.
