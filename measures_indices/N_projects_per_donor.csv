@@ -1,20 +1,27 @@
 ,donors,donors
-European Commission,563,0.27463414634146344
-Department for International Development,408,0.19902439024390245
-World Bank,219,0.10682926829268292
-Embassy of Belgium,203,0.09902439024390244
-USAID,179,0.0873170731707317
-Embassy of Sweden,91,0.04439024390243902
-Embassy of Canada,75,0.036585365853658534
-KfW Bankengruppe,65,0.03170731707317073
-Global Environmental Facility,48,0.023414634146341463
-Deutsche Gesellschaft Technische Zusammenarbeit,39,0.01902439024390244
-UNDP,32,0.015609756097560976
-African Development Fund,28,0.013658536585365854
-Embassy of Netherlands,26,0.012682926829268294
-Ministry of Finance,19,0.009268292682926829
-Embassy of Germany,14,0.006829268292682927
-Korea International Cooperation Agency,13,0.006341463414634147
-Embassy of Japan,13,0.006341463414634147
-European Investment Bank,12,0.005853658536585366
-Poland Ministry of Foreign Affairs,3,0.0014634146341463415
+European Commission,446,0.2943894389438944
+Department for International Development,240,0.15841584158415842
+Embassy of Belgium,180,0.1188118811881188
+USAID,160,0.10561056105610561
+World Bank,82,0.05412541254125412
+Embassy of Canada,67,0.04422442244224423
+KfW Bankengruppe,65,0.0429042904290429
+Embassy of Sweden,44,0.029042904290429043
+Embassy of Sweden|Department for International Development,43,0.02838283828382838
+Deutsche Gesellschaft Technische Zusammenarbeit,39,0.02574257425742574
+Embassy of Netherlands,25,0.0165016501650165
+World Bank|Global Environmental Facility,24,0.015841584158415842
+Embassy of Germany,14,0.009240924092409241
+Korea International Cooperation Agency,13,0.008580858085808581
+UNDP|USAID|European Commission|Embassy of Belgium,11,0.007260726072607261
+Embassy of Japan,10,0.006600660066006601
+UNDP,10,0.006600660066006601
+African Development Fund|European Commission,10,0.006600660066006601
+UNDP|African Development Fund|European Commission,6,0.0039603960396039604
+African Development Fund|European Investment Bank|Ministry of Finance|World Bank,6,0.0039603960396039604
+Ministry of Finance|Embassy of Belgium,5,0.0033003300330033004
+European Commission|Embassy of Belgium,4,0.0026402640264026403
+Embassy of Sweden|European Commission,4,0.0026402640264026403
+Embassy of Belgium|UNDP|Embassy of Japan|Embassy of Canada|World Bank|Poland Ministry of Foreign Affairs,3,0.0019801980198019802
+Ministry of Finance,2,0.0013201320132013201
+UNDP|USAID,2,0.0013201320132013201
